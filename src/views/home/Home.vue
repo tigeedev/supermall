@@ -38,6 +38,7 @@
   import BackTop from 'components/content/backTop/BackTop'
 
   import {getHomeMultidata, getHomeGoods} from 'network/home'
+  import {debounce} from 'common/utils.js'
 
   export default {
     name: 'Home',
@@ -77,6 +78,15 @@
       this.getHomeGoods('pop')
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
+    },
+    mounted() {
+      const refresh = debounce(this.$refs.scroll.refresh, 50)
+
+      // 监听item中图片加载完成
+      this.$bus.$on('itemImageLoad', () => {
+        refresh()
+        // this.$refs.scroll.refresh()
+      })
     },
     methods: {
       /**

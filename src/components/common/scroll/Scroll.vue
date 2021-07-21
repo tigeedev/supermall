@@ -37,24 +37,32 @@
       })
 
       // 监听滚动的位置
-      this.scroll.on('scroll', position => {
-        // console.log(position);
-        this.$emit('scroll', position)
-      })
+      if(this.probeType === 2 || this.probeType === 3) {
+        this.scroll.on('scroll', position => {
+          // console.log(position);
+          this.$emit('scroll', position)
+        })
+      }
 
-      // 上拉刷新
-      this.scroll.on('pullingUp', () => {
-        // console.log('上拉刷新')
-        this.$emit('pullingUp')
-      })
+      // 监听到滚动到底部，上拉刷新
+      if(this.pullUpLoad) {
+        this.scroll.on('pullingUp', () => {
+          // console.log('上拉刷新')
+          this.$emit('pullingUp')
+        })
+      }
     },
     methods: {
       // 点击返回顶部
       scrollTo(x, y, time=500) {
-        this.scroll.scrollTo(x, y, time)
+        // 先判断this.scroll有没有值，有值再执行scrollTo()
+        this.scroll && this.scroll.scrollTo(x, y, time)
       },
       finishPullUp() {
         this.scroll.finishPullUp()
+      },
+      refresh() {
+        this.scroll && this.scroll.refresh()
       }
     }
   }

@@ -265,7 +265,7 @@ Home.vue和Scroll.vue之间进行通信
 - Better-Scroll在决定有多少区域可以滚动时, 是根据scrollerHeight属性决定
   - scrollerHeight属性是根据放Better-Scroll的content中的子组件的高度
   - 但是我们的首页中, 刚开始在计算scrollerHeight属性时, 是没有将图片计算在内的
-  - 所以, 计算出来的告诉是错误的(1300+)
+  - 所以, 计算出来的是错误的(1300+)
   - 后来图片加载进来之后有了新的高度, 但是scrollerHeight属性并没有进行更新.
   - 所以滚动出现了问题
 - 如何解决这个问题了?
@@ -273,18 +273,17 @@ Home.vue和Scroll.vue之间进行通信
   - 如何监听图片加载完成了?
     - 原生的js监听图片: img.onload = function() {}
     - Vue中监听: @load='方法'
-  - 调用scroll的refresh()
+  - 然后调用scroll的refresh()
 - 如何将GoodsListItem.vue中的事件传入到Home.vue中
   - 因为涉及到非父子组件的通信, 所以这里我们选择了**事件总线**
     - bus ->总线
-    - Vue.prototype.$bus = new Vue()
-    - this.bus.emit('事件名称', 参数)
-    - this.bus.on('事件名称', 回调函数(参数))
-
+    - 用原型引入$bus：Vue.prototype.$bus = new Vue()
+    - GoodsListItem发射事件：this.$bus.$emit('事件名称', 参数)
+    - Home监听事件（created）：this.$bus.$on('事件名称', 回调函数(参数))
 - 问题一: refresh找不到的问题
   - 第一: 在Scroll.vue中, 调用this.scroll的方法之前, 判断this.scroll对象是否有值
   - 第二: 在mounted生命周期函数中使用 this.$refs.scroll而不是created中
-- 问题二: 对于refresh非常频繁的问题, 进行防抖操作
+- 问题二: 对于refresh非常频繁的问题, 进行防抖操作（选做）
   - 防抖debounce/节流throttle(课下研究一下)
   - 防抖函数起作用的过程:
     - 如果我们直接执行refresh, 那么refresh函数会被执行30次.

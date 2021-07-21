@@ -1,6 +1,6 @@
 <template>
   <div class="good-list-item">
-    <img :src="gooditem.show.img" alt="">
+    <img :src="gooditem.show.img" alt="" @load="imgLoad">
     <div class="goods-info">
       <p>{{gooditem.title}}</p>
       <span class="price">{{gooditem.orgPrice}}</span>
@@ -18,6 +18,12 @@
         default() {
           return {}
         }
+      }
+    },
+    methods: {
+      imgLoad() {
+        // 发送事件 表示item中图片已加载完毕
+        this.$bus.$emit('itemImageLoad')
       }
     }
   }
