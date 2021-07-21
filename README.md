@@ -162,9 +162,9 @@ goods: {
 
 - 封装GoodsList，展示商品列表
 
-- props: goods -> list[30]
+- props: goods -> goods[this.currentType].list
 - v-for goods -> GoodsListItem[30]
-- GoodListItem(组件) -> GoodsItem(数据)
+- GoodListItem(组件) -> gooditem(数据)
 
 ### 2.8.2 封装GoodsListItem组件
 
@@ -176,14 +176,16 @@ goods: {
 
 ## 2.9 对滚动重构-封装Scroll
 
-`Scroll` 组件是基于Better-Scroll的进一步封装
+> `Scroll` 组件是基于Better-Scroll的进一步封装
+>
+> 使用时在mounted（生命周期函数）中初始化better-scroll
 
 - 1.创建BetterScroll对象
   - new BScroll(el, {  probeType、pullUpLoad、click })
   - 注意: wrapper -> content -> 很多内容
 - 2.监听滚动scroll
   - probeType: 0/1/2(手指滚动)/3(只要是滚动)
-  - bscroll.on('scroll', (position) => {})
+  - bscroll.on('scroll', (position) => { $emit自定义事件 })
 - 3.上拉加载pullingUp
   - pullUpLoad: true
   - bscroll.on('pullingUp', () => {})
@@ -198,6 +200,8 @@ Home.vue和Scroll.vue之间进行通信
 
 - Home.vue将probeType设置为3
 - Scroll.vue需要通过$emit, 实时将事件发送到Home.vue
+
+
 
 ## 2.10 上拉加载更多
 
@@ -221,7 +225,7 @@ Home.vue和Scroll.vue之间进行通信
   }
   ```
 
-- 请求数据完成后，调动finishPullUp()
+- 请求数据完成后，调动 `finishPullUp()`
 
   ```
   // 多次请求数据, 可以继续上拉加载
@@ -234,12 +238,15 @@ Home.vue和Scroll.vue之间进行通信
 
 ### 1. 封装BackTop组件
 
+- div>img
+
 ### 2. 如何监听组件的点击
 
 - 可以直接监听 `back-top` 组件的点击？
   - 不可以, 监听组件的点击必须添加修饰 `.native`
+  - <back-top @click.native='backClick' />
 - 点击时，调用scrollTo返回顶部
-  - scroll对象, `scroll.scrollTo(x, y, time)`
+  - scroll对象, scroll.scrollTo(x, y, time)
   - this.$refs.scroll.scrollTo(0, 0, 500)
 
 ### 3. BackTop组件的显示和隐藏
