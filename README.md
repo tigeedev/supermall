@@ -347,5 +347,11 @@ debounce(func, delay) {
 #### 2. 让Home中的内容保持原来的位置
 
 - 离开时, 保存一个位置信息saveY.
+  - this.saveY = this.$refs.scroll.scroll.y
 - 进来时, 将位置设置为原来保存的位置saveY信息即可.
-  - 注意: 最好回来时, 进行一次refresh()
+  - 注意: 最好回来时, 先进行一次refresh()
+  - 先刷新：this.$refs.scroll.refresh()
+  - 在设置位置：this.$refs.scroll.scrollTo(0, this.saveY, 0)
+- 说明：生命周期钩子函数的使用
+  - `activated`：keep-alive组件激活时使用，一进入页面就触发
+  - `deactivated`：keep-alive组件停用时调用
