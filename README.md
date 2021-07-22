@@ -310,24 +310,31 @@ debounce(func, delay) {
 #### 1. 获取到tabControl的offsetTop
 
 - 必须知道滚动到多少时, 开始有吸顶效果, 这个时候就需要获取tabControl的offsetTop
-- 但是, 如果直接在mounted中获取tabControl的offsetTop, 那么值是不正确.
-- 如何获取正确的值了?
-  - 监听HomeSwiper中img的加载完成.
-  - 加载完成后, 发出事件, 在Home.vue中, 获取正确的值.
+- 但是, 如果直接在mounted中获取tabControl的offsetTop, 那么值是不正确的（图片没加载完成）
+- 如何获取正确的值?
+  - 监听HomeSwiper中img的加载完成. 
+    - 监听图片加载：<img @load="imageLoad">
+    - 发送事件：this.$emit('swiperImageLoad')
+  - 加载完成后发出事件, 在Home.vue中监听事件, 获取正确的值.
+    - this.$refs.tabControl2.$el.offsetTop
   - 补充:
     - 为了不让HomeSwiper多次发出事件,
     - 可以使用isLoad的变量进行状态的记录.
-  - 注意: 这里不进行多次调用和debounce的区别
 
-#### 2. 监听滚动, 动态的改变tabControl的样式
+#### 2. 监听滚动, 解决tabControl的停留问题
 
-- 问题:动态的改变tabControl的样式时, 会出现两个问题:
-  - 问题一: 下面的商品内容, 会突然上移
-  - 问题二: tabControl虽然设置了fixed, 但是也随着Better-Scroll一起滚出去了.
-- 其他方案来解决停留问题.
-  - 在最上面, 多复制了一份PlaceHolderTabControl组件对象, 利用它来实现停留效果.
-  - 当用户滚动到一定位置时, PlaceHolderTabControl显示出来.
-  - 当用户滚动没有达到一定位置时, PlaceHolderTabControl隐藏起来.
+- 在最上面, 多复制一份TabControl组件对象, 利用它来实现停留效果
+- 复制的TabControl组件默认隐藏，当用户滚动到一定位置（tabOffsetTop处）时, 让TabControl显示出来
+  - v-show="isTabFixed"（false/true）
+  - isTabFixed = -position.y > this.tabOffsetTop
+- 问题一：复制的TabControl组件不显示
+  - 先取消导航组件 nav-bar 的固定定位fixed
+  - 提高TabControl的层级关系z-index：又因为z-index只对定位的元素起作用，所以需要给复制的TabControl设置一个相对定位relative
+- 问题二：两个组件在点击时不保持同步
+  - TabControl组件中有一个currentIndex属性，用于记录当前点击的位置
+  - 在Home中点击TabControl时，将index分别赋值给两个组件即可
+    - this.$refs.tabControl1.currentIndex = index
+    - this.$refs.tabControl2.currentIndex = index
 
 
 

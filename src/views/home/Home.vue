@@ -2,7 +2,11 @@
   <div id="home">
     <!-- 首页导航 -->
     <nav-bar class="home-nav"> <div slot="center">蘑菇街</div> </nav-bar>
-
+    <tab-control :titles="['流行','新款','精选']"
+                  @tabClick="tabClick" 
+                  ref="tabControl1" 
+                  class="tab-control" 
+                  v-show="isTabFixed"/>
     <scroll class="content" 
             ref="scroll" 
             :probe-type="3" 
@@ -11,13 +15,15 @@
             @pullingUp="loadMore">
       <!-- 轮播图 -->
       <!-- :banners 表示组件内props中的变量 -->
-      <home-swiper :banners="banners"/>
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"/>
       <!-- 推荐 -->
       <recommend-view :recommends="recommends"/>
       <feature-view/>
-      <tab-control class="tab-control" 
-                  :titles="['流行','新款','精选']"
-                  @tabClick="tabClick" />
+
+      <tab-control :titles="['流行','新款','精选']"
+                   @tabClick="tabClick" 
+                   ref="tabControl2" />
+
       <good-list :goods="showGoods" />
     </scroll>
 
@@ -62,7 +68,9 @@
           'sell': {page: 0, list: []}
         },
         currentType: 'pop',
-        isShowBackTop: false
+        isShowBackTop: false,
+        tabOffsetTop: 0,
+        isTabFixed: false
       }
     },
     computed: {
@@ -104,18 +112,28 @@
             this.currentType = 'sell';
             break;
         }
+        // 保证两个tabControl组件在点击时保持同步
+        this.$refs.tabControl1.currentIndex = index
+        this.$refs.tabControl2.currentIndex = index
       },
       backClick() {
         this.$refs.scroll.scrollTo(0, 0)
       },
       contentScroll(position) {
-        // console.log(position.y);
-        // 当滚动距离大于1000时, isShowBackTop=true 即显示该组件
+        // 1. 判断BackTop是否显示。当滚动距离大于1000时显示该组件
         this.isShowBackTop = -position.y > 1000
+
+        // 2. 决定tabControl是否吸顶
+        this.isTabFixed = -position.y > this.tabOffsetTop
       },
       loadMore() {
         // console.log('刷新啦啦啦啦');
         this.getHomeGoods(this.currentType)
+      },
+      swiperImageLoad() {
+        // 等图片加载完成, 获取tabControl的offsetTop
+        // 所有组件都有一个属性$el: 用于获取组件中的元素
+        this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
       },
 
       /**
@@ -148,7 +166,7 @@
 
 <style scoped>
   #home {
-    padding-top: 44px;
+    /* padding-top: 44px; */
     /* 给home一个确定的高度 100vh -> 即视口高度 */
     height: 100vh;
     position: relative;
@@ -156,21 +174,23 @@
 
   .home-nav {
     background-color: #ff8198;
-    position: fixed;
+    color: #fff;
+    /* 在使用浏览器原生滚动时，为了让导航不跟随一起滚动 */
+    /* position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 999;
+    z-index: 999; */
   }
 
   .tab-control {
-    position: sticky;
-    top: 44px;
+    /* 设置相对定位，z-index才会有效果 */
+    position: relative;
+    z-index: 999;
   }
 
   .content {
     overflow: hidden;
-
     /* 利用定位给 中间滚动的区域 一个高度 */
     position: absolute;
     top: 44px;  /* 组件nav-bar 高度为44px */ 
