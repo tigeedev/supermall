@@ -27,3 +27,15 @@ export class goodsInfo {
     this.services = services //退货补运费/全国包邮/7天无理由退货/72小时发货
   }
 }
+
+
+// 详情页商家数据
+export class shopInfo {
+  constructor(shopInfo) {
+    this.shopLogo = shopInfo.shopLogo // 商家logo/店铺名
+    this.name = shopInfo.name
+    this.sell = shopInfo.cSells // 总销量
+    this.goods = shopInfo.cGoods // 全部宝贝
+    this.score = shopInfo.score // 评分
+  }
+}

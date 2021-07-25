@@ -42,7 +42,7 @@
 <style scoped>
   .detail-base-info {
     padding: 0 10px;
-    margin: 10px 0 10px;
+    margin: 10px 0 0;
     border-bottom: 5px solid #eeeeee;
   }
 
