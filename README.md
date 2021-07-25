@@ -355,3 +355,36 @@ debounce(func, delay) {
 - 说明：生命周期钩子函数的使用
   - `activated`：keep-alive组件激活时使用，一进入页面就触发
   - `deactivated`：keep-alive组件停用时调用
+
+
+
+## 2.15 跳转到详情页并且携带iid
+
+> 思路：点击某一个商品时，跳转到详情页面，同时传递商品iid参数。之后根据商品iid请求对应的数据进行展示
+
+### 1 点击某一个商品跳转
+
+- 监听GoodsListItem组件的点击
+- 点击跳转：this.$router.push('/detail/'+ this.gooditem.iid)
+
+### 2 封装详情页组件 Detail
+
+- 详情页属于比较大的一个模块，可放入views文件夹下. `views/detail/Detail.vue`
+- 在组件创建完时，拿到iid：this.$route.params.iid
+
+### 3 配置detail对应的路由映射
+
+```js
+const routes = [{
+  // ...
+  {
+    path: '/detail/:iid',  // 此处用动态路由传递参数iid
+    component: Detail
+  }
+]
+```
+
+
+
+# 四、详情页开发
+
