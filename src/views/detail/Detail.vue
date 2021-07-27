@@ -7,6 +7,8 @@
       <detail-shop-info :shopInfo="shopInfo" />
       <detail-info :detailInfo="detailInfo" @imageLoad="imageLoad"/>
       <detail-params-info :paramsInfo="paramsInfo"/>
+      <detail-comment-info :commentInfo="commentInfo"/>
+      <good-list :goods="recommends"/>
     </scroll>
   </div>
 </template>
@@ -19,7 +21,9 @@
   import DetailInfo from './childComps/DetailInfo'
   import DetailParamsInfo from './childComps/DetailParamsInfo'
   import Scroll from 'components/common/scroll/Scroll'
-  import {getDetail, goodsInfo, shopInfo, paramsInfo} from 'network/detail'
+  import GoodList from 'components/content/goods/GoodList'
+  import DetailCommentInfo from './childComps/DetailCommentInfo'
+  import {getDetail, goodsInfo, shopInfo, paramsInfo, getRecommend} from 'network/detail'
 
   export default {
     name: 'Detail',
@@ -30,7 +34,9 @@
       DetailShopInfo,
       DetailInfo,
       DetailParamsInfo,
-      Scroll
+      DetailCommentInfo,
+      Scroll,
+      GoodList
     },
     data() {
       return {
@@ -39,7 +45,9 @@
         goodsInfo: {},
         shopInfo: {},
         detailInfo: {},
-        paramsInfo: {}
+        paramsInfo: {},
+        commentInfo: {},
+        recommends: []
       }
     },
     created() {
@@ -50,7 +58,7 @@
       getDetail(this.iid).then(res => {
         // 1.获取数据
         const data = res.result
-        console.log(res)
+        // console.log(res)
 
         // 2.获取顶部的图片数据 
         this.topImages = data.itemInfo.topImages
@@ -66,7 +74,17 @@
 
         // 6.获取参数信息
         this.paramsInfo = new paramsInfo(data.itemParams)
+        
+        // 7.评论信息
+        if(data.rate.cRate !== 0) {
+          this.commentInfo = data.rate.list[0]
+        }
+      })
 
+      // 请求推荐页数据
+      getRecommend().then(res => {
+        // console.log(res);
+        this.recommends = res.data.list
       })
     },
     methods: {

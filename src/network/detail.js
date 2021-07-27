@@ -10,6 +10,13 @@ export function getDetail(iid) {
   })
 }
 
+// 推荐页数据
+export function getRecommend() {
+  return request({
+    url: '/recommend'
+  })
+}
+
 
 /**
  * 详情页数据整合 (重点)
