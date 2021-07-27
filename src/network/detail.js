@@ -39,3 +39,13 @@ export class shopInfo {
     this.score = shopInfo.score // 评分
   }
 }
+
+// 获取参数信息
+export class paramsInfo {
+  constructor(itemParams) {
+    this.ruleTables = itemParams.rule.tables[0] //尺码说明
+    this.ruleKey = itemParams.rule.key
+    this.infoSet = itemParams.info.set // 产品参数
+    this.infoKey = itemParams.info.key
+  }
+}

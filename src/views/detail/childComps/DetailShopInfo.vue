@@ -53,7 +53,8 @@
 
 <style scoped>
   .shopInfo {
-    padding: 15px 10px 0;
+    padding: 15px 10px 30px;
+    border-bottom: 5px solid #eeeeee;
   }
 
   .shop-base {
