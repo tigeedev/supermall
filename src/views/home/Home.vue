@@ -44,10 +44,11 @@
   import BackTop from 'components/content/backTop/BackTop'
 
   import {getHomeMultidata, getHomeGoods} from 'network/home'
-  import {debounce} from 'common/utils.js'
+  import {itemListenerMixin} from 'common/mixin'
 
   export default {
     name: 'Home',
+    mixins: [itemListenerMixin],
     components:{
       HomeSwiper,
       RecommendView,
@@ -80,12 +81,16 @@
       }
     },
     activated() {
+      // 先刷新
       this.$refs.scroll.refresh()
       this.$refs.scroll.scrollTo(0, this.saveY, 0)
-      // this.$refs.scroll.refresh() 放在后面切换时有时会自动上去
     },
     deactivated() {
+      // 1. 离开时保存Y值
       this.saveY = this.$refs.scroll.scroll.y
+
+      // 2. 取消全局事件的监听
+      this.$bus.$off('itemImgLoad', this.itemImgListener)
     },
     created() {  // 生命周期函数，组件创建时调用
       // 1. 请求多个数据
@@ -97,13 +102,9 @@
       this.getHomeGoods('sell')
     },
     mounted() {
-      const refresh = debounce(this.$refs.scroll.refresh, 50)
-
-      // 监听item中图片加载完成
-      this.$bus.$on('itemImageLoad', () => {
-        refresh()
-        // this.$refs.scroll.refresh()
-      })
+      /**
+       * 使用mixin混入
+       */
     },
     methods: {
       /**

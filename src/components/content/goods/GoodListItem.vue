@@ -27,8 +27,8 @@
     },
     methods: {
       imgLoad() {
-        // 发送事件 表示item中图片已加载完毕
-        this.$bus.$emit('itemImageLoad')
+        // 发送全局事件 表示item中图片已加载完毕
+        this.$bus.$emit('itemImageLoad') 
       },
       itemClick() {
         // console.log("跳转详情页");

@@ -24,9 +24,11 @@
   import GoodList from 'components/content/goods/GoodList'
   import DetailCommentInfo from './childComps/DetailCommentInfo'
   import {getDetail, goodsInfo, shopInfo, paramsInfo, getRecommend} from 'network/detail'
+  import {itemListenerMixin} from 'common/mixin'
 
   export default {
     name: 'Detail',
+    mixins: [itemListenerMixin],
     components: { 
       DetailNavBar,
       DetailSwiper,
@@ -83,7 +85,7 @@
 
       // 请求推荐页数据
       getRecommend().then(res => {
-        // console.log(res);
+        console.log(res);
         this.recommends = res.data.list
       })
     },
@@ -91,6 +93,15 @@
       imageLoad() {
         this.$refs.scroll.refresh()
       }
+    },
+    mounted() {
+      /**
+       * 使用mixin混入
+       */
+    },
+    destroyed() {
+      // 取消全局事件的监听
+      this.$bus.$off('itemImgLoad', this.itemImgListener)
     }
   }
 </script>

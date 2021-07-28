@@ -1,4 +1,4 @@
-# 一. 项目设置
+## 一. 项目运行
 
 ```
 # 安装依赖
@@ -13,9 +13,9 @@ npm run build
 
 
 
-# 二. 项目框架搭建
+## 二. 项目框架搭建
 
-## 1.1 划分目录结构
+### 1.1 划分目录结构
 
 - assets - img/css资源
 - common - 公共的js文件
@@ -33,20 +33,20 @@ npm run build
 
 
 
-## 1.2 CSS初始化和全局样式
+### 1.2 CSS初始化和全局样式
 
 - [normalize.css](https://github.com/necolas/normalize.css)
 - base.css
 
 
 
-## 1.3 起别名
+### 1.3 起别名
 
 根目录新建 `vue.config.js` 文件，在里面配置
 
 
 
-## 1.4 tabbar的封装
+### 1.4 tabbar的封装
 
 > tabbar实现完成，说明项目的整体架构已经搭好。
 >
@@ -59,7 +59,7 @@ npm run build
 
 
 
-## 1.5 axios的封装
+### 1.5 axios的封装
 
 - 创建axios实例
 - 拦截响应，返回.data数据
@@ -67,9 +67,9 @@ npm run build
 
 
 
-# 三. 首先开发
+## 三. 首先实现思路
 
-## 2.1 navbar导航栏
+### 2.1 navbar导航栏
 
 - 封装navbar包含三个插槽：left、center、right
 - 设置navbar相关的样式
@@ -77,7 +77,7 @@ npm run build
 
 
 
-## 2.2 请求首页数据
+### 2.2 请求首页数据
 
 - 封装请求首页更多数据
 - 将banner数据放在banners变量中
@@ -85,27 +85,27 @@ npm run build
 
 
 
-## 2.3 HomeSwiper轮播图 - 根据Swiper封装
+### 2.3 HomeSwiper轮播图 - 根据Swiper封装
 
 - 使用Swiper和SwiperItem
 - 传入banners进行展示
 
 
 
-## 2.4 RecommendView推荐
+### 2.4 RecommendView推荐
 
 - 传入recommends数据，进行展示
 
 
 
-## 2.5 FeatureView
+### 2.5 FeatureView
 
 - 独立组件封装，展示一张图片即可
   - div>a>img
 
 
 
-## 2.6 TabControl
+### 2.6 TabControl
 
 > 只是文字不一样的话，没有必要用插槽slot
 
@@ -119,9 +119,9 @@ npm run build
 
 
 
-## 2.7 首页商品数据的请求
+### 2.7 首页商品数据的请求
 
-### 2.7.1 设计数据结构, 用于保存数据
+#### 2.7.1 设计数据结构, 用于保存数据
 
 ```
 goods: {
@@ -131,7 +131,7 @@ goods: {
 }
 ```
 
-### 2.7.2 发送数据请求
+#### 2.7.2 发送数据请求
 
 - 在 `home.js` 中封装getHomeGoods(type, page)
 
@@ -156,9 +156,9 @@ goods: {
 
 
 
-## 2.8 对商品数据进行展示
+### 2.8 对商品数据进行展示
 
-### 2.8.1 封装GoodsList组件
+#### 2.8.1 封装GoodsList组件
 
 - 封装GoodsList，展示商品列表
 
@@ -166,7 +166,7 @@ goods: {
 - v-for goods -> GoodsListItem[30]
 - GoodListItem(组件) -> gooditem(数据)
 
-### 2.8.2 封装GoodsListItem组件
+#### 2.8.2 封装GoodsListItem组件
 
 - 封装GoodsListItem，列表中每一个商品
 - props: goodsItem 
@@ -174,7 +174,7 @@ goods: {
 
 
 
-## 2.9 对滚动重构-封装Scroll
+### 2.9 对滚动重构-封装Scroll
 
 > `Scroll` 组件是基于Better-Scroll的进一步封装
 >
@@ -203,7 +203,7 @@ Home.vue和Scroll.vue之间进行通信
 
 
 
-## 2.10 上拉加载更多
+### 2.10 上拉加载更多
 
 - 通过Scroll监听上拉加载更多
 
@@ -234,13 +234,13 @@ Home.vue和Scroll.vue之间进行通信
 
 
 
-## 2.11 返回顶部BackTop
+### 2.11 返回顶部BackTop
 
-### 1. 封装BackTop组件
+#### 1. 封装BackTop组件
 
 - div>img
 
-### 2. 如何监听组件的点击
+#### 2. 如何监听组件的点击
 
 - 可以直接监听 `back-top` 组件的点击？
   - 不可以, 监听组件的点击必须添加修饰 `.native`
@@ -249,7 +249,7 @@ Home.vue和Scroll.vue之间进行通信
   - scroll对象, scroll.scrollTo(x, y, time)
   - this.$refs.scroll.scrollTo(0, 0, 500)
 
-### 3. BackTop组件的显示和隐藏
+#### 3. BackTop组件的显示和隐藏
 
 - `v-show` ="isShowBackTop"（false / true）
 - 监听滚动, 拿到滚动的位置:
@@ -260,7 +260,7 @@ Home.vue和Scroll.vue之间进行通信
 
 
 
-## 2.12 解决首页中可滚动区域的问题
+### 2.12 解决首页中可滚动区域的问题
 
 - Better-Scroll在决定有多少区域可以滚动时, 是根据scrollerHeight属性决定
   - scrollerHeight属性是根据放Better-Scroll的content中的子组件的高度
@@ -305,7 +305,7 @@ debounce(func, delay) {
 
 
 
-## 2.13 tabControl的吸顶效果
+### 2.13 tabControl的吸顶效果
 
 #### 1. 获取到tabControl的offsetTop
 
@@ -338,41 +338,40 @@ debounce(func, delay) {
 
 
 
-## 2.14 让Home保持原来的状态
+### 2.14 让Home保持原来的状态
 
-#### 1. 让Home不要随意销毁掉
+#### 1. 让Home不要随意销毁
 
 - keep-alive
 
-#### 2. 让Home中的内容保持原来的位置
+#### 2. Home保持位置状态
 
-- 离开时, 保存一个位置信息saveY.
+- `deactivated`：记录离开时的位置，保存位置信息saveY.
   - this.saveY = this.$refs.scroll.scroll.y
-- 进来时, 将位置设置为原来保存的位置saveY信息即可.
-  - 注意: 最好回来时, 先进行一次refresh()
-  - 先刷新：this.$refs.scroll.refresh()
-  - 在设置位置：this.$refs.scroll.scrollTo(0, this.saveY, 0)
-- 说明：生命周期钩子函数的使用
-  - `activated`：keep-alive组件激活时使用，一进入页面就触发
-  - `deactivated`：keep-alive组件停用时调用
+- `activated`：通过scrollTo函数，设置进来时的位置
+  - 进来先进行一次刷新：this.$refs.scroll.refresh()
+  - 再设置位置：this.$refs.scroll.scrollTo(0, this.saveY, 0)
 
 
 
-## 2.15 跳转到详情页并且携带iid
+## 四. 详情页实现思路
+
+### 4.1 跳转到详情页并且携带iid
 
 > 思路：点击某一个商品时，跳转到详情页面，同时传递商品iid参数。之后根据商品iid请求对应的数据进行展示
 
-### 1 点击某一个商品跳转
+#### 点击某一个商品跳转
 
 - 监听GoodsListItem组件的点击
+- 点击之后获取商品的iid，跳转到详情页，并且传入iid
 - 点击跳转：this.$router.push('/detail/'+ this.gooditem.iid)
 
-### 2 封装详情页组件 Detail
+#### 封装详情页组件 Detail
 
 - 详情页属于比较大的一个模块，可放入views文件夹下. `views/detail/Detail.vue`
 - 在组件创建完时，拿到iid：this.$route.params.iid
 
-### 3 配置detail对应的路由映射
+#### 配置detail对应的路由映射
 
 ```js
 const routes = [{
@@ -386,5 +385,56 @@ const routes = [{
 
 
 
-# 四、详情页开发
+### 4.2 详情页的导航栏实现
+
+- 返回按钮：left
+- 标题列表的展示：center
+
+
+
+### 4.3 请求详情的数据
+
+- 接口：`/detail?iid=`
+
+
+
+### 4.4 轮播图的实现
+
+- Swiper/SwiperItem
+
+
+
+### 4.5 商品基本信息的展示
+
+- 数据来自四面八方
+- 对数据进行汇总：保存到一个对象中
+- 把这个对象传入到子组件中
+
+
+
+### 4.6 店铺信息的展示
+
+### 4.7 商品图片的展示
+
+### 4.8 参数信息的展示
+
+### 4.9 评论信息的展示
+
+- 时间格式化
+- 服务器返回的时间戳 -> date -> 格式化
+- yyyy-MM-dd hh:mm:ss
+
+
+
+### 4.10 推荐数据的展示
+
+- 请求推荐数据：`/recommend`
+- GoodList组件展示数据
+
+
+
+### 4.11 mixin的使用
+
+- 创建混入对象：const mixin = {}
+- 组件中使用：mixins: [mixin]
 
