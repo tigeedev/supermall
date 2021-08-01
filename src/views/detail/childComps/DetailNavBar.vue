@@ -32,6 +32,9 @@
     methods: {
       itemClick(index) {
         this.currentIndex = index
+
+        // 发送事件
+        this.$emit('itemClick', index)
       },
       back() {
         this.$router.go(-1)

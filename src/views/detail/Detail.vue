@@ -1,14 +1,17 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav" />
-    <scroll class="content" ref="scroll">
-      <detail-swiper :topImages="topImages"/>
+    <detail-nav-bar class="detail-nav" @itemClick="itemClick" ref="nav"/>
+    <scroll class="content" 
+            ref="scroll"
+            @scroll="contentScroll" 
+            :probeType="3">
+      <detail-swiper :topImages="topImages" />
       <detail-base-info :goods="goodsInfo" />
       <detail-shop-info :shopInfo="shopInfo" />
       <detail-info :detailInfo="detailInfo" @imageLoad="imageLoad"/>
-      <detail-params-info :paramsInfo="paramsInfo"/>
-      <detail-comment-info :commentInfo="commentInfo"/>
-      <good-list :goods="recommends"/>
+      <detail-params-info :paramsInfo="paramsInfo" ref="params"/>
+      <detail-comment-info :commentInfo="commentInfo" ref="comment"/>
+      <good-list :goods="recommends" ref="recommend"/>
     </scroll>
   </div>
 </template>
@@ -25,6 +28,7 @@
   import DetailCommentInfo from './childComps/DetailCommentInfo'
   import {getDetail, goodsInfo, shopInfo, paramsInfo, getRecommend} from 'network/detail'
   import {itemListenerMixin} from 'common/mixin'
+  import {debounce} from 'common/utils'
 
   export default {
     name: 'Detail',
@@ -49,14 +53,17 @@
         detailInfo: {},
         paramsInfo: {},
         commentInfo: {},
-        recommends: []
+        recommends: [],
+        themeTopYs: [0,1000,2000,3000],
+        getThemeTopY: null,
+        currentIndex: 0
       }
     },
     created() {
-      // 组件创建完，拿到iid
+      // 1.组件创建完，拿到iid
       this.iid = this.$route.params.iid
 
-      //请求详情页数据
+      // 2.请求详情页数据
       getDetail(this.iid).then(res => {
         // 1.获取数据
         const data = res.result
@@ -81,17 +88,68 @@
         if(data.rate.cRate !== 0) {
           this.commentInfo = data.rate.list[0]
         }
+
+        // this.$nextTick(() => {
+        //   /**
+        //    * 等前面渲染完成，再回调这个函数
+        //    * 根据最新的数据，对应的DOM已经被渲染出来
+        //    * 但是图片依然是没有加载完成 (目前获取到的offsetTop不包含其中的图片)
+        //    * offsetTop值不对的时候，都是因为图片的问题
+        //    */
+        //   this.themeTopYs = []
+        //   this.themeTopYs.push(0) 
+        //   this.themeTopYs.push(this.$refs.params.$el.offsetTop)
+        //   this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
+        //   this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
+        //   console.log(this.themeTopYs);
+        // })
       })
 
-      // 请求推荐页数据
+      // 3.请求推荐页数据
       getRecommend().then(res => {
-        console.log(res);
         this.recommends = res.data.list
       })
+
+      // 4.给getThemeTopY赋值(对赋值的操作进行防抖)
+      this.getThemeTopY = debounce(() => {
+        this.themeTopYs = []
+        this.themeTopYs.push(0) 
+        this.themeTopYs.push(this.$refs.params.$el.offsetTop - 44)
+        this.themeTopYs.push(this.$refs.comment.$el.offsetTop - 44)
+        this.themeTopYs.push(this.$refs.recommend.$el.offsetTop - 44)
+        this.themeTopYs.push(Number.MAX_VALUE)  //多push个最大的值，便于滚动时导航栏变色
+
+        console.log(this.themeTopYs);
+      }, 500)
     },
     methods: {
       imageLoad() {
         this.$refs.scroll.refresh()
+        // 图片加载完, 获取组件的offsetTop
+        this.getThemeTopY()
+      },
+      itemClick(index) {
+        // 点击跳转到对应位置
+        this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 500)
+      },
+      contentScroll(position) {
+        // 1.获取Y值
+        const positionY = -position.y
+
+        // 2.positionY和themeTopYs中的值进行比较
+        // themeTopYs: [0,1000,2000,3000,Number.MAX_VALUE]
+
+        // positionY在 0-1000 之间，index = 0
+        // positionY在 1000-2000，index = 1
+        // positionY在 2000-3000，index = 2
+        // positionY在 3000-最大值 MAX_VALUE之间，index = 3
+        for(let i = 0; i < this.themeTopYs.length-1; i++) {
+          // 条件一：防止赋值的过程过于频繁
+          if((this.currentIndex !== i) && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])) {
+            this.currentIndex = i;
+            this.$refs.nav.currentIndex = this.currentIndex
+          }
+        }
       }
     },
     mounted() {

@@ -26,19 +26,21 @@
         default() {
           return {}
         }
-      },
-      data() {
-        return {
-          count: 0
-        }
+      }
+    },
+    data() {
+      return {
+        counter: 0
       }
     },
     methods: {
       imageLoad() {
         // 判断，所有图片都加载完成后，进行一次回调就可以了
-        if(++this.count === this.detailInfo.detailImage[0].list.length){
-          this.$emit('imageLoad')
-        }
+        // if(++this.counter === this.detailInfo.detailImage[0].list.length){
+        //   this.$emit('imageLoad')
+        // }
+        
+        this.$emit('imageLoad')
       }
     }
   }
