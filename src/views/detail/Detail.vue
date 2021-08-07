@@ -13,6 +13,8 @@
       <detail-comment-info :commentInfo="commentInfo" ref="comment"/>
       <good-list :goods="recommends" ref="recommend"/>
     </scroll>
+    <detail-bottom-bar />
+    <back-top @click.native='backClick' v-show="isShowBackTop" />
   </div>
 </template>
 
@@ -26,13 +28,16 @@
   import Scroll from 'components/common/scroll/Scroll'
   import GoodList from 'components/content/goods/GoodList'
   import DetailCommentInfo from './childComps/DetailCommentInfo'
+  import DetailBottomBar from './childComps/DetailBottomBar'
+
   import {getDetail, goodsInfo, shopInfo, paramsInfo, getRecommend} from 'network/detail'
-  import {itemListenerMixin} from 'common/mixin'
+  import {itemListenerMixin, backTopMixin} from 'common/mixin'
   import {debounce} from 'common/utils'
+
 
   export default {
     name: 'Detail',
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin, backTopMixin],
     components: { 
       DetailNavBar,
       DetailSwiper,
@@ -41,6 +46,7 @@
       DetailInfo,
       DetailParamsInfo,
       DetailCommentInfo,
+      DetailBottomBar,
       Scroll,
       GoodList
     },
@@ -133,6 +139,9 @@
         this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 500)
       },
       contentScroll(position) {
+        // 判断BackTop是否显示。当滚动距离大于1000时显示该组件
+        this.isShowBackTop = -position.y > 1000
+
         // 1.获取Y值
         const positionY = -position.y
 
@@ -181,6 +190,6 @@
 
   .content {
     /* better-scroll必须设置高度 */
-    height: calc(100% - 44px);
+    height: calc(100% - 44px - 49px);
   }
 </style>

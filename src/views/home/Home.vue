@@ -7,8 +7,9 @@
                   ref="tabControl1" 
                   class="tab-control" 
                   v-show="isTabFixed"/>
+                  
     <scroll class="content" 
-            ref="scroll" 
+            ref="scroll"
             :probe-type="3" 
             @scroll="contentScroll" 
             :pull-up-load="true" 
@@ -41,14 +42,13 @@
   import TabControl from 'components/content/tabcontrol/TabControl'
   import GoodList from 'components/content/goods/GoodList'
   import Scroll from 'components/common/scroll/Scroll'
-  import BackTop from 'components/content/backTop/BackTop'
 
   import {getHomeMultidata, getHomeGoods} from 'network/home'
-  import {itemListenerMixin} from 'common/mixin'
+  import {itemListenerMixin, backTopMixin} from 'common/mixin'
 
   export default {
     name: 'Home',
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin, backTopMixin],
     components:{
       HomeSwiper,
       RecommendView,
@@ -56,8 +56,7 @@
       NavBar,
       TabControl,
       GoodList,
-      Scroll,
-      BackTop
+      Scroll
     },
     data() {
       return {
@@ -69,7 +68,6 @@
           'sell': {page: 0, list: []}
         },
         currentType: 'pop',
-        isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixed: false,
         saveY: 0
@@ -125,9 +123,6 @@
         // 保证两个tabControl组件在点击时保持同步
         this.$refs.tabControl1.currentIndex = index
         this.$refs.tabControl2.currentIndex = index
-      },
-      backClick() {
-        this.$refs.scroll.scrollTo(0, 0)
       },
       contentScroll(position) {
         // 1. 判断BackTop是否显示。当滚动距离大于1000时显示该组件
