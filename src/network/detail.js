@@ -27,8 +27,10 @@ export function getRecommend() {
 export class goodsInfo {
   constructor(itemInfo, columns, services) {
     this.title = itemInfo.title; //标题
+    this.desc = itemInfo.desc
     this.price = itemInfo.price; //价格
     this.oldPrice = itemInfo.oldPrice; //原价
+    this.realPrice = itemInfo.lowNowPrice
     this.discount = itemInfo.discountDesc; //今日特价
     this.columns = columns; //销量/收藏
     this.services = services //退货补运费/全国包邮/7天无理由退货/72小时发货

@@ -13,7 +13,7 @@
       <detail-comment-info :commentInfo="commentInfo" ref="comment"/>
       <good-list :goods="recommends" ref="recommend"/>
     </scroll>
-    <detail-bottom-bar />
+    <detail-bottom-bar @toCart="addToCart"/>
     <back-top @click.native='backClick' v-show="isShowBackTop" />
   </div>
 </template>
@@ -125,7 +125,7 @@
         this.themeTopYs.push(this.$refs.recommend.$el.offsetTop - 44)
         this.themeTopYs.push(Number.MAX_VALUE)  //多push个最大的值，便于滚动时导航栏变色
 
-        console.log(this.themeTopYs);
+        // console.log(this.themeTopYs);
       }, 500)
     },
     methods: {
@@ -159,6 +159,19 @@
             this.$refs.nav.currentIndex = this.currentIndex
           }
         }
+      },
+      addToCart() {
+        // vuex保存购物车状态
+        const product = {}
+        product.image = this.topImages[0]
+        product.title = this.goodsInfo.title
+        product.desc = this.goodsInfo.desc
+        product.price = this.goodsInfo.realPrice
+        product.iid = this.iid  //商品唯一标识
+
+        // 商品添加进购物车
+        // this.$store.commit('addCart', product)
+        this.$store.dispatch('addCart', product)
       }
     },
     mounted() {
