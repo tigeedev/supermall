@@ -464,31 +464,161 @@ const routes = [{
 
 - `Detail` 中接收事件。完成滚动内容显示对应标题的逻辑
 
-  - ```js
-    if((this.currentIndex !== i) && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])) {
-    	this.currentIndex = i;
-    	this.$refs.nav.currentIndex = this.currentIndex
-    }
+  ```js
+  if((this.currentIndex !== i) && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])) {
+  	this.currentIndex = i;
+  	this.$refs.nav.currentIndex = this.currentIndex
+  }
+  
+  positionY = 滚动过程中的Y值
+  themeTopYs = 保存了所有标题的offsetTop
+  themeTopYs: [0,1000,2000,3000,Number.MAX_VALUE]
+  
+  条件成立：this.currentIndex = i
+  条件一：this.currentIndex !== i
+  * 防止赋值的过程过于频繁
+  条件二：(positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])
+  * 判断区间：在 0 和 某个数字 之间 (i < this.themeTopYs.length-1)
+  
+  注意细节：
+  在数组themeTopYs中，除了标题的offsetTop值外，还添加了一个最大值Number.MAX_VALUE。目的是减少if条件中的逻辑判断.
+  ```
+
+
+
+### 4.13 底部工具栏的封装
+
+- 底部工具栏：`DetailBottomBar` 
+- 客服 | 店铺 | 收藏 | 加入购物车 | 购买
+
+### 4.14 详情页的回到顶部
+
+- home.vue和detail.vue回到顶部  使用 `mixin` 
+
+
+
+### 4.15 点击加入购物车
+
+#### a. 监听加入购物车按钮的点击，并获取商品信息
+
+- 监听
+- 获取商品信息：iid/price/image/title/desc
+
+#### b. 将商品添加到Vuex中
+
+- 安装和配置Vuex
+- 定义mutations，将商品添加到state.cartList中
+- 重构代码：
+  - 将mutations中的代码抽取到actions中（定义两个mutations）
+  - 将mutations/actions单独抽取到文件中
+
+
+
+## 五. 购物车的展示
+
+### 5.1 购物车导航栏的展示
+
+- 购物车(n)
+
+
+
+### 5.2 购物车商品的展示
+
+- CartList组件 -> Scroll（滚动问题）
+- CartListItem组件 -> CheckButton
+
+
+
+### 5.3 商品的选中和不选中切换
+
+- 修改模型对象mutations，改变button的选中状态
+
+
+
+### 5.4 底部工具栏的汇总
+
+- 全选按钮：引入CheckButton组件
+- 计算总价格：totalPrice
+- 去计算(checkLength)
+
+
+
+### 5.5 购物车的全选按钮
+
+- 显示的状态
+  - isSelectAll
+  - 判断 如果有一个商品不选中，全选就是不选中
+- 点击全选按钮
+  - 如果原来都是选中，点击变成全部不选中
+  - 如果原来都是不选中（某些不选中），点击全部选中
+  - 思路：直接判断上方的 isSelectAll 即可
+
+
+
+### 5.6 添加购物车弹窗
+
+#### a. Vuex的补充
+
+- Actions可以返回一个Promise
+- mapActions的映射关系
+- mapMutations的映射关系
+
+#### b. Toast封装
+
+- toast提示框，用插件方式封装
+
+```
+# 新建toast文件
+	Toast.vue
+	index.js
     
-    positionY = 滚动过程中的Y值
-    themeTopYs = 保存了所有标题的offsetTop
-    themeTopYs: [0,1000,2000,3000,Number.MAX_VALUE]
-    
-    条件成立：this.currentIndex = i
-    条件一：this.currentIndex !== i
-    * 防止赋值的过程过于频繁
-    条件二：(positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])
-    * 判断区间：在 0 和 某个数字 之间 (i < this.themeTopYs.length-1)
-    
-    注意细节：
-    在数组themeTopYs中，除了标题的offsetTop值外，还添加了一个最大值Number.MAX_VALUE。目的是减少if条件中的逻辑判断.
-    ```
-
-    
+# main.js中安装toast插件
+	import toast from 'components/common/toast'
+	Vue.use(toast)
+	
+# Detail中使用
+	this.$toast.show(res, 2000)
+```
 
 
 
+## 其他细节
 
+### 1. fastClick减少点击延迟
+
+- fastClick-解决移动端300ms延迟
+
+```
+# 安装fastclick插件
+npm install fastclick --save
+
+# 在main.js中引入并绑定到body
+import FastClick from 'fastclick'
+FastClick.attach(document.body);
+```
+
+### 2. vue-lazyload图片懒加载
+
+- 图片懒加载 ：图片需要出现在屏幕上时，再加载这张图片
+- 参考文章：[1.vue-lazyload官方文档](https://github.com/hilongjw/vue-lazyload) 、[2.在vue中使用图片懒加载详细指南](https://segmentfault.com/a/1190000011672452) 
+
+```
+# 安装
+npm i vue-lazyload --save
+
+# 在main.js中引入
+Vue.use(VueLazyload)
+
+// 或者添加VueLazyload 选项
+Vue.use(VueLazyload, {
+  preLoad: 1.3,
+  loading: require('./assets/loading.gif'),
+  attempt: 1
+})
+
+# 在需要懒加载的地方, 把img标签里面的 :src 属性 改成 v-lazy
+:src='/static/img/' => v-lazy='/static/img/'
+```
 
 
 

@@ -171,12 +171,15 @@
 
         // 商品添加进购物车
         // this.$store.commit('addCart', product)
-        this.$store.dispatch('addCart', product)
+        this.$store.dispatch('addCart', product).then(res => {
+          // toast提示窗口
+          this.$toast.show(res)
+        })
       }
     },
     mounted() {
       /**
-       * 使用mixin混入
+       * 已使用mixin混入
        */
     },
     destroyed() {
