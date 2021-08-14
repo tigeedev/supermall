@@ -46,7 +46,7 @@ const routes = [{
 // 创建router实例
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  // mode: 'history'  //history模式下打包后打开页面会出现空白
 })
 
 // 导出router实例
