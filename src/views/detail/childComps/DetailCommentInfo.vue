@@ -9,7 +9,7 @@
     </div>
 
     <div class="info-user">
-      <img :src="commentInfo.user.avatar">
+      <img :src="commentInfo.user.avatar | imgFilter">
       <span>{{commentInfo.user.uname}}</span>
     </div>
 
@@ -21,7 +21,7 @@
         <span class="detail-style">{{commentInfo.style}}</span>
       </div>
       <div class="info-imgs">
-        <img v-for="(item, index) in commentInfo.images" :src="item" :key="index">
+        <img v-for="(item, index) in commentInfo.images" :src="item | imgFilter" :key="index">
       </div>
     </div>
   </div>
@@ -49,6 +49,10 @@
         
         // 2. 将date格式化，转成对应的字符串
         return formatDate(date,'yyyy-MM-dd hh:mm');
+      },
+      imgFilter(value) {
+        // 解决打包时详情页图片加载不出来的问题
+        return 'http:' + value
       }
     }
   }

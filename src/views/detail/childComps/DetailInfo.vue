@@ -10,7 +10,7 @@
 
     <div class="info-image">
       <img v-for="(item, index) in detailInfo.detailImage[0].list" 
-           :src="item"
+           :src="item | imgFilter"
            :key="index"
            @load="imageLoad">
     </div>
@@ -26,6 +26,12 @@
         default() {
           return {}
         }
+      }
+    },
+    filters: {
+      imgFilter(value) {
+        // 解决打包时详情页图片加载不出来的问题
+        return 'http:' + value
       }
     },
     data() {

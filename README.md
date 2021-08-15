@@ -649,3 +649,66 @@ module.exports = {
   }
 }
 ```
+
+
+
+## 遇到的问题
+
+#### 1. 项目打包后静态资源无法加载，导致首页白屏
+
+- 原因一：`vue.config.js` 没有配置
+
+  ```js
+  //vue.config.js
+  module.exports = {
+      publicPath: './', //打包后的位置(如果不设置这个静态资源会报404)
+      outputDir: 'dist', //打包后的目录名称
+      assetsDir: 'static' //静态资源目录名称
+  }
+  ```
+
+- 原因二：路由模式mode设置成了history，默认是hash
+
+  ```js
+  //router.js
+  new VueRouter({
+    routes,
+    // mode: 'history'  //配合nginx本地才能正常使用history模式
+  })
+  ```
+
+- 参考文章：[config官方文档](https://cli.vuejs.org/zh/config/) 、[vue-cli3.x正确打包项目,解决静态资源与路由加载无效的问题](https://www.cnblogs.com/roseAT/p/11145913.html) 
+
+#### 2. 打包后页面图片显示不出
+
+在本地打开项目图片可正常显示，但是打包后就出现了图片空白的问题。打开F12发现图片已经请求成功，但是对应的网址不全导致图片不能显示。请求图片时手动拼接上 `http:`即可
+
+```js
+//DetailInfo.vue
+<img :src="item | imgFilter">
+
+filters: {
+    imgFilter(value) {
+        return 'http:' + value
+    }
+}
+```
+
+<img src="https://tigeedev.oss-cn-hangzhou.aliyuncs.com/img/20210815193842.png" alt="image-20210815193839789" style="zoom: 80%;" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

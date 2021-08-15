@@ -6,9 +6,9 @@
     </div>
 
     <div class="item-img">
-      <img :src="itemInfo.image" alt="">
+      <img :src="itemInfo.image | imgFilter" alt="">
     </div>
-   
+
     <div class="item-info">
       <div class="item-title">{{itemInfo.title}}</div>
       <div class="item-desc">{{itemInfo.desc}}</div>
@@ -39,6 +39,12 @@
     methods: {
       checkClick() {
         this.itemInfo.checked = !this.itemInfo.checked
+      }
+    },
+    filters: {
+      imgFilter(value) {
+        // 解决打包时图片加载不出来的问题
+        return 'http:' + value
       }
     }
   }

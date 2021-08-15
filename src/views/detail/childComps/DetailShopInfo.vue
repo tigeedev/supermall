@@ -2,14 +2,14 @@
   <div class="shopInfo">
 
     <div class="shop-base">
-      <div class="shop-logo"><img :src="shopInfo.shopLogo"></div>
+      <div class="shop-logo"><img :src="shopInfo.shopLogo | imgFilter"></div>
       <div class="shop-name">{{shopInfo.name}}</div>
     </div>
 
     <div class="shop-middle">
       <div class="shop-middle-item shop-middle-left">
         <div class="shop-sell">
-          <div>{{shopInfo.sell}}</div>
+          <div>{{shopInfo.sell | sellCountFilter}}</div>
           <div>总销量</div>
         </div>
         <div class="shop-goods">
@@ -45,6 +45,19 @@
         type: Object,
         default() {
           return {}
+        }
+      }
+    },
+   filters: {
+      imgFilter(value) {
+        // 解决打包时详情页图片加载不出来的问题
+        return 'http:' + value
+      },
+      sellCountFilter(value) {
+        if(value < 10000) {
+          return value
+        }else {
+          return (value/10000).toFixed(1) + '万'
         }
       }
     }
