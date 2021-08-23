@@ -45,9 +45,9 @@ const routes = [{
 
 // 创建router实例
 const router = new VueRouter({
-  routes,
+  mode: 'history', //配合服务器使用
   base: process.env.BASE_URL,
-  // mode: 'history'  //需要后台配置
+  routes
 })
 
 // 导出router实例

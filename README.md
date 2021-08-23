@@ -20,7 +20,7 @@ npm run build
 - assets - img/css资源
 - common - 公共的js文件
   - const.js 公共的常量
-  - utils.js 公共的方法
+  - utils.js 工具方法
 
 - components - 一些公共组件
   - common  完全公共的组件（其他项目也可以使用）
@@ -48,9 +48,8 @@ npm run build
 
 ### 2.4 tabbar的封装
 
-> tabbar实现完成，说明项目的整体架构已经搭好。
+> tabbar实现完成，说明项目的整体架构已经搭好。之后就可以分模块开发
 >
-> 之后就可以分模块开发
 
 - 封装Tabbar
 - 封装TabbarItem
@@ -262,46 +261,39 @@ Home.vue和Scroll.vue之间进行通信
 
 ### 3.12 解决首页中可滚动区域的问题
 
-- Better-Scroll在决定有多少区域可以滚动时, 是根据scrollerHeight属性决定
-  - scrollerHeight属性是根据放Better-Scroll的content中的子组件的高度
-  - 但是我们的首页中, 刚开始在计算scrollerHeight属性时, 是没有将图片计算在内的
-  - 所以, 计算出来的是错误的(1300+)
-  - 后来图片加载进来之后有了新的高度, 但是scrollerHeight属性并没有进行更新.
-  - 所以滚动出现了问题
-- 如何解决这个问题了?
-  - 监听每一张图片是否加载完成, 只要有一张图片加载完成了, 执行一次refresh()
-  - 如何监听图片加载完成了?
-    - 原生的js监听图片: img.onload = function() {}
-    - Vue中监听: @load='方法'
-  - 然后调用scroll的refresh()
-- 如何将GoodsListItem.vue中的事件传入到Home.vue中
-  - 因为涉及到非父子组件的通信, 所以这里我们选择了**事件总线**
-    - bus ->总线
-    - 用原型引入$bus：Vue.prototype.$bus = new Vue()
-    - GoodsListItem发射事件：this.$bus.$emit('事件名称', 参数)
-    - Home监听事件（created）：this.$bus.$on('事件名称', 回调函数(参数))
-- 问题一: refresh找不到的问题
-  - 第一: 在Scroll.vue中, 调用this.scroll的方法之前, 判断this.scroll对象是否有值
-  - 第二: 在mounted生命周期函数中使用 this.$refs.scroll而不是created中
-- 问题二: 对于refresh非常频繁的问题, 进行防抖操作（选做）
-  - 防抖debounce/节流throttle(课下研究一下)
-  - 防抖函数起作用的过程:
-    - 如果我们直接执行refresh, 那么refresh函数会被执行30次.
-    - 可以将refresh函数传入到debounce函数中, 生成一个新的函数.
-    - 之后在调用非常频繁的时候, 就使用新生成的函数.
-    - 而新生成的函数, 并不会非常频繁的调用, 如果下一次执行来的非常快, 那么会将上一次取消掉
+- 问题描述：在首页以及详情页对商品使用better-scroll进行展示时，时而出现无法向下滚动的情况
 
-```js
-debounce(func, delay) {
-    let timer = null
-    return function (...args) {
-        if (timer) clearTimeout(timer)
-        timer = setTimeout(() => {
-            func.apply(this, args)
-        }, delay)
-    }
-},
-```
+- 原因：Better-Scroll根据scrollerHeight属性决定有多少区域可以滚动。而scrollerHeight又根据Better-Scroll的content中的子组件的高度。在页面打开时，网络请求的数据还未渲染到页面上，图片未加载完成，导致计算出来的高度有误，所以滚动出现了问题。
+
+- 解决：监听 `@load` 组件中每一张图片的加载，有图片加载完成时调用scroll内置的refresh()，对滚动区域刷新，重新计算高度。
+
+- 难点：将GoodsListItem.vue中的事件传入到Home.vue中
+
+  ```
+  # 非父子组件的通信 - 事件总线 bus
+  - 用原型引入$bus：Vue.prototype.$bus = new Vue()
+  - GoodsListItem发送事件：this.$bus.$emit('事件名称', 参数)
+  - Home监听事件（created）：this.$bus.$on('事件名称', callback)
+  
+  # 注意：要在mounted生命周期函数中使用 this.$refs.scroll而不是created中
+  ```
+
+- 优化：图片加载完成，refresh会被频繁的调用。可以封装一个防抖函数，有效减少刷新次数。
+
+  ```js
+  debounce(func, delay) {
+      let timer = null
+      return function (...args) {
+          if (timer) clearTimeout(timer)
+          timer = setTimeout(() => {
+              func.apply(this, args)
+          }, delay)
+      }
+  }
+  
+  //调用
+  debounce(this.$refs.scroll.refresh(),100)
+  ```
 
 
 
@@ -317,9 +309,7 @@ debounce(func, delay) {
     - 发送事件：this.$emit('swiperImageLoad')
   - 加载完成后发出事件, 在Home.vue中监听事件, 获取正确的值.
     - this.$refs.tabControl2.$el.offsetTop
-  - 补充:
-    - 为了不让HomeSwiper多次发出事件,
-    - 可以使用isLoad的变量进行状态的记录.
+  - 补充：为了不让HomeSwiper多次发出事件，可以使用isLoad的变量进行状态的记录.
 
 #### b. 监听滚动, 解决tabControl的停留问题
 
@@ -563,26 +553,11 @@ const routes = [{
 - mapActions的映射关系
 - mapMutations的映射关系
 
-#### b. Toast封装
-
-- toast提示框，用插件方式封装
-
-```
-# 新建toast文件
-	Toast.vue
-	index.js
-    
-# main.js中安装toast插件
-	import toast from 'components/common/toast'
-	Vue.use(toast)
-	
-# Detail中使用
-	this.$toast.show(res, 2000)
-```
+#### b. 封装Toast
 
 
 
-## 其他细节
+## 项目扩展
 
 ### 1. fastClick减少点击延迟
 
@@ -648,6 +623,23 @@ module.exports = {
     }
   }
 }
+```
+
+### 4. Toast的使用
+
+toast是常见的提示弹窗组件，用插件方式封装
+
+```
+# 新建toast文件
+	Toast.vue
+	index.js
+
+# main.js中安装toast插件
+	import toast from 'components/common/toast'
+	Vue.use(toast)
+
+# Detail中使用
+	this.$toast.show(res, 2000)
 ```
 
 
