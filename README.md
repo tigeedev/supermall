@@ -9,6 +9,9 @@ npm run serve
 
 # 编译生产
 npm run build
+
+# 项目地址
+shop.tigeedev.com
 ```
 
 
@@ -690,13 +693,50 @@ filters: {
 
 
 
+## 项目部署
 
+- 在网站根目录右键-- `Git Bash Here` 或在 VScode 中打开项目
 
+- 初始化仓库（创建成功标志：根目录出现".git"文件）
 
+  ```css
+  git init
+  ```
 
+- 链接远程仓库
 
+  ```css
+  # 查看当前git的远程仓库版本
+  git remote -v
+  
+  # 移除掉远程仓库的配置
+  git remote rm origin
+  
+  # 添加ssh协议的远程仓库
+  git remote add origin git@github.com:tigeedev/supermall.git（仓库地址）
+  ```
 
+- 从远程仓库pull文件
 
+  ```css
+  git pull origin master
+  ```
+
+- 将本地文件push到远程仓库
+
+  ```css
+  # 查看工作目录的状态
+  git status
+  
+  # 将文件添加到暂存区
+  git add .
+  
+  # 把暂存区的文件提交到本地仓库
+  git commit -m "自定义提交信息"
+  
+  # 将本地仓库的文件push到远程仓库(若 push 不成功，可加 -f 进行强推操作)
+  git push -u origin master
+  ```
 
 
 
